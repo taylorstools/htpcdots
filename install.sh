@@ -73,5 +73,19 @@ flatpak install flathub com.bitwarden.desktop --noninteractive
 #Copy the /etc files (/etc)
 sudo cp -r ~/builds/htpcdots/etc/* /etc/
 
+#Change GRUB_TIMEOUT to 0
+sudo sed -i 's/^GRUB_TIMEOUT=.*/GRUB_TIMEOUT=0/' /etc/default/grub
+#Update GRUB
+sudo update-grub
+
+#Turn on quiet boot
+sudo sed -i 's/^quiet_boot=".*"/quiet_boot="1"/' /etc/grub.d/10_linux
+
+#Remove GRUB Plymouth themes
+sudo rm -rf /usr/share/plymouth/themes
+
+#Rebuild initramfs
+sudo update-initramfs -k all -u -v
+
 #Remove ifupdown and configure NetworkManager for GNOME
 sudo nala purge ifupdown -y
