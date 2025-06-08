@@ -33,11 +33,11 @@ RSTICK_DOWN = ["KEY_DOWN"] #right analog stick down
 #RSTICK_RIGHT = ["firefox", "discord"] #right analog stick right
 
 [settings]
-LSTICK_SENSITIVITY = "15" #sensitivity when scrolling or moving cursor, lower value is higher sensitivity, minimum 1
-RSTICK_SENSITIVITY = "2" #sensitivity when scrolling or moving cursor, lower value is higher sensitivity, minimum 1
+LSTICK_SENSITIVITY = "18" #sensitivity when scrolling or moving cursor, lower value is higher sensitivity, minimum 1
+RSTICK_SENSITIVITY = "4" #sensitivity when scrolling or moving cursor, lower value is higher sensitivity, minimum 1
 LSTICK = "cursor" #cursor, scroll, bind or disabled
 RSTICK = "scroll" #cursor, scroll, bind or disabled
-LSTICK_DEADZONE = "20" #integer between 0 and 128, bigger number is wider deadzone, default 5
+LSTICK_DEADZONE = "15" #integer between 0 and 128, bigger number is wider deadzone, default 5
 RSTICK_DEADZONE = "10" #integer between 0 and 128, bigger number is wider deadzone, default 5
 16_BIT_AXIS = "true" #necessary for Xbox controllers and Switch joycons, use false for other controllers
 GRAB_DEVICE = "false" #gain exclusivity on the device
