@@ -1,0 +1,43 @@
+#SAMPLE CONFIG FILE FOR XBOX CONTROLLERS
+#Put this in ~/.config/makima and rename it to the exact name of the device as shown by the 'evtest' command, including spaces and capitalization. Omit "/" if present.
+#You can find all the available keycodes in /usr/include/linux/input-event-codes.h
+#If you're not sure which keycode corresponds to which key, you can run 'evtest', select your device and press the corresponding key/button.
+#Relative and absolute axis events are hard coded, for example use RSTICK_UP, RSTICK_DOWN etc to rebind your analog stick.
+#This config file is tested for Xbox 360, Xbox One and Xbox Elite 2 controllers. When using a different controller, if no specific config file for your device is available, change the keycodes on the left according to those of your controller (evtest is your friend again). If your controller has a button to enable/disable analog sticks, make sure they're enabled.
+
+[remap]
+#Examples of Button => Key(s)
+BTN_NORTH = ["KEY_BACKSPACE"] #X on 8bitdo
+BTN_EAST = ["KEY_ESC"] #B on 8bitdo
+BTN_SOUTH = ["BTN_LEFT"] #A on 8bitdo
+BTN_WEST = ["BTN_RIGHT"] #Y on 8bitdo
+BTN_TR = ["KEY_LEFTCTRL", "KEY_TAB"] #RB on 8bitdo
+BTN_TL = ["KEY_LEFTALT", "KEY_LEFT"] #LB on 8bitdo
+BTN_START = ["KEY_ENTER"] #start key on 8bitdo
+BTN_SELECT = ["KEY_LEFTMETA"] #select key on 8bitdo
+BTN_THUMBR = ["BTN_MIDDLE"] #RS on 8bitdo
+BTN_THUMBL = ["KEY_F"] #LS on 8bitdo
+#BTN_MODE = ["KEY_SPACE"] #Xbox button on 8bitdo
+#Examples of Axis events => Key(s)
+BTN_TR2 = ["KEY_LEFTCTRL", "KEY_W"] #RT on 8bitdo
+BTN_TL2 = ["KEY_LEFTALT", "KEY_TAB"] #LT on 8bitdo
+BTN_DPAD_UP = ["KEY_UP"] #directional pad up
+BTN_DPAD_RIGHT = ["KEY_RIGHT"] #directional pad right
+BTN_DPAD_DOWN = ["KEY_DOWN"] #directional pad down
+BTN_DPAD_LEFT = ["KEY_LEFT"] #directional pad left
+RSTICK_UP = ["KEY_UP"] #right analog stick up
+RSTICK_DOWN = ["KEY_DOWN"] #right analog stick down
+
+[commands]
+#RSTICK_LEFT = ["foot sh -c 'pacman -Q | wc -l && sleep 1 && neofetch' && sleep 5"] #right analog stick left
+#RSTICK_RIGHT = ["firefox", "discord"] #right analog stick right
+
+[settings]
+LSTICK_SENSITIVITY = "15" #sensitivity when scrolling or moving cursor, lower value is higher sensitivity, minimum 1
+RSTICK_SENSITIVITY = "2" #sensitivity when scrolling or moving cursor, lower value is higher sensitivity, minimum 1
+LSTICK = "cursor" #cursor, scroll, bind or disabled
+RSTICK = "scroll" #cursor, scroll, bind or disabled
+LSTICK_DEADZONE = "20" #integer between 0 and 128, bigger number is wider deadzone, default 5
+RSTICK_DEADZONE = "10" #integer between 0 and 128, bigger number is wider deadzone, default 5
+16_BIT_AXIS = "true" #necessary for Xbox controllers and Switch joycons, use false for other controllers
+GRAB_DEVICE = "false" #gain exclusivity on the device
