@@ -137,8 +137,8 @@ mkdir -p ~/.config/
 cp -r ~/builds/htpcdots/config/* ~/.config/
 
 #Copy the Unified Remote server custom remote
-mkdir -p "~/.urserver/remotes/custom/HTPC Remote"
-cp -r "~/builds/htpcdots/urserver/remotes/custom/HTPC Remote/*" "~/.urserver/remotes/custom/HTPC Remote"
+mkdir -p ~/.urserver/remotes/custom/HTPCRemote
+cp -r ~/builds/htpcdots/urserver/remotes/custom/HTPCRemote/* ~/.urserver/remotes/custom/HTPCRemote
 
 #Remove ifupdown and configure NetworkManager for GNOME
 sudo nala purge ifupdown -y
