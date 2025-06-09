@@ -2,12 +2,14 @@
 
 #Need to figure out:
 #Dimmer and blue light filter - DONE
-#Remote control/typing with phone app
-#Auto-mapping LivingRoomPC and TaylorPC, plus TaylorNAS
-#Makima
+#Remote control/typing with phone app - DONE
+#Auto-mapping LivingRoomPC and TaylorPC, plus TaylorNAS - DONE
+#Makima - DONE
 #Figure out backing up Gnome settings/extensions/themes/tweaks
 #Dash shortcuts for YouTube, etc.
 #Automatic upgrades for apt and flatpak
+#Download wallpapers from hyprlanddots - DONE
+#Copy .icons from Git for mouse cursor - DONE
 
 #Make it so user doesn't have to type password to use sudo
 echo "$USER ALL=(ALL) NOPASSWD: ALL" | sudo tee -a /etc/sudoers
@@ -31,10 +33,12 @@ packages=(
     nautilus-extension-gnome-terminal
     ffmpegthumbnailer
     gnome-tweaks
+    vlc
     git
     flatpak
     preload
     evtest
+    gpg
 )
 
 #Install packages with Nala
@@ -105,6 +109,21 @@ sudo systemctl set-default graphical.target
 #Enable fractional scaling in GNOME
 gsettings set org.gnome.mutter experimental-features "['scale-monitor-framebuffer']"
 
+#Fastfetch
+mkdir -p ~/builds/fastfetch
+#Download latest Fastfetch .deb package
+curl -s https://api.github.com/repos/fastfetch-cli/fastfetch/releases/latest \
+  | grep browser_download_url \
+  | grep 'fastfetch-linux-amd64.deb"' \
+  | cut -d '"' -f 4 \
+  | xargs -n 1 -I {} sh -c 'curl -L -o ~/builds/fastfetch/$(basename {}) {}'
+
+sudo nala install -y ~/builds/fastfetch/fastfetch-linux-amd64.deb
+
+#Modify .bashrc
+echo "alias cls='clear'" | tee -a ~/.bashrc
+echo "fastfetch --logo-type small" | tee -a ~/.bashrc
+
 #MAKIMA SETUP
 #Download the repo
 git clone https://github.com/cyber-sushi/makima ~/builds/makima
@@ -139,6 +158,14 @@ cp -r ~/builds/htpcdots/config/* ~/.config/
 #Copy the Unified Remote server custom remote
 mkdir -p ~/.urserver/remotes/custom/HTPCRemote
 cp -r ~/builds/htpcdots/urserver/remotes/custom/HTPCRemote/* ~/.urserver/remotes/custom/HTPCRemote
+
+#Copy the wallpapers
+git clone https://github.com/taylorstools/hyprlanddots ~/builds/hyprlanddots
+rm ~/builds/hyprlanddots/config/wallpapers/.current_lockscreen.png
+rm ~/builds/hyprlanddots/config/wallpapers/.current_wallpaper
+mkdir -p ~/.config/wallpapers
+cp -r ~/builds/hyprlanddots/config/wallpapers/* ~/.config/wallpapers
+rm -rf ~/builds/hyprlanddots
 
 #Remove ifupdown and configure NetworkManager for GNOME
 sudo nala purge ifupdown -y
