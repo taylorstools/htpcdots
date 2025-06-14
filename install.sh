@@ -7,11 +7,13 @@
 #Makima - DONE
 #Figure out backing up Gnome settings/extensions/themes/tweaks
 #Dash shortcuts for YouTube, etc.
-#Automatic upgrades for apt and flatpak
+#Automatic upgrades for apt and flatpak - DONE
 #Download wallpapers from hyprlanddots - DONE
 #Copy .icons from Git for mouse cursor - DONE
 
-#Make it so user doesn't have to type password to use sudo
+#Shortcuts for: Netflix, Terminal, Chrome, YouTube, JellyFin, Cozy, File Explorer
+
+#Make it so user doesn't have to type password to use sudof
 echo "$USER ALL=(ALL) NOPASSWD: ALL" | sudo tee -a /etc/sudoers
 
 #Install nala
@@ -34,11 +36,13 @@ packages=(
     ffmpegthumbnailer
     gnome-tweaks
     vlc
+    qbittorrent
     git
     flatpak
     preload
     evtest
     gpg
+    unattended-upgrades
 )
 
 #Install packages with Nala
@@ -75,8 +79,20 @@ sudo nala install firefox -y
 #Enable Flathub
 sudo flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 
-#Install Bitwarden
-flatpak install flathub com.bitwarden.desktop --noninteractive
+flatpakages=(
+    com.bitwarden.desktop
+    io.missioncenter.MissionCenter
+    it.mijorus.gearlever
+)
+
+#Install flatpak packages
+for package in ${flatpakages[@]}; do
+    flatpak install flathub ${package} --noninteractive
+done
+
+#Fix cursor in flatpaks
+flatpak --user override --filesystem=/home/$USER/.icons/:ro
+flatpak --user override --filesystem=/usr/share/icons/:ro
 
 #Copy the /etc files (/etc)
 sudo cp -r ~/builds/htpcdots/etc/* /etc/
@@ -126,25 +142,25 @@ echo "fastfetch --logo-type small" | tee -a ~/.bashrc
 
 #MAKIMA SETUP
 #Download the repo
-git clone https://github.com/cyber-sushi/makima ~/builds/makima
+#git clone https://github.com/cyber-sushi/makima ~/builds/makima
 
 #Download latest Makima executable
-curl -s https://api.github.com/repos/cyber-sushi/makima/releases/latest \
-  | grep browser_download_url \
-  | grep 'makima"' \
-  | cut -d '"' -f 4 \
-  | xargs -n 1 -I {} sh -c 'curl -L -o ~/builds/makima/$(basename {}) {}'
+#curl -s https://api.github.com/repos/cyber-sushi/makima/releases/latest \
+#  | grep browser_download_url \
+#  | grep 'makima"' \
+# | cut -d '"' -f 4 \
+#  | xargs -n 1 -I {} sh -c 'curl -L -o ~/builds/makima/$(basename {}) {}'
 
 #Make install script executable
-chmod +x ~/builds/makima/install.sh
-
-sudo ~/builds/makima/install.sh $USER
+#chmod +x ~/builds/makima/install.sh
+#Install
+#sudo ~/builds/makima/install.sh $USER
 
 #Fix 8bitdo controller
-echo 'ACTION=="add", ATTRS{idVendor}=="2dc8", ATTRS{idProduct}=="310a", RUN+="/sbin/modprobe xpad", RUN+="/bin/sh -c '\''echo 2dc8 310a > /sys/bus/usb/drivers/xpad/new_id'\''"' | sudo tee /etc/udev/rules.d/99-8bitdo-xinput.rules
+#echo 'ACTION=="add", ATTRS{idVendor}=="2dc8", ATTRS{idProduct}=="310a", RUN+="/sbin/modprobe xpad", RUN+="/bin/sh -c '\''echo 2dc8 310a > /sys/bus/usb/drivers/xpad/new_id'\''"' | sudo tee /etc/udev/rules.d/99-8bitdo-xinput.rules
 
 #Reload udev
-sudo udevadm control --reload
+#sudo udevadm control --reload
 
 #Install Unified Remote
 mkdir -p ~/builds/urserver
@@ -155,18 +171,73 @@ sudo nala install -y ~/builds/urserver/unified-remote.deb
 mkdir -p ~/.config/
 cp -r ~/builds/htpcdots/config/* ~/.config/
 
+#Copy the .icons dot files (~/.icons)
+mkdir -p ~/.icons/
+cp -r ~/builds/htpcdots/.icons/* ~/.icons/
+
+#Copy the htpcsetup folder to home (~/htpcsetup)
+mkdir -p ~/htpcsetup/
+cp -r ~/builds/htpcdots/htpcsetup/* ~/htpcsetup/
+#Make scripts executable
+chmod +x ~/htpcsetup/scripts/*.sh
+
 #Copy the Unified Remote server custom remote
 mkdir -p ~/.urserver/remotes/custom/HTPCRemote
 cp -r ~/builds/htpcdots/urserver/remotes/custom/HTPCRemote/* ~/.urserver/remotes/custom/HTPCRemote
+
+#Install Jellyfin Media Player
+mkdir -p ~/builds/jmp
+version=$(curl --head https://github.com/jellyfin/jellyfin-media-player/releases/latest | tr -d '\r' | grep '^location' | sed 's/.*\/v//g')
+wget "https://github.com/jellyfin/jellyfin-media-player/releases/download/v$version/jellyfin-media-player_$version-$(grep VERSION_CODENAME /etc/os-release | cut -d= -f2).deb" -O ~/builds/jmp/jmp.deb
+sudo nala install -y ~/builds/jmp/jmp.deb
 
 #Copy the wallpapers
 git clone https://github.com/taylorstools/hyprlanddots ~/builds/hyprlanddots
 rm ~/builds/hyprlanddots/config/wallpapers/.current_lockscreen.png
 rm ~/builds/hyprlanddots/config/wallpapers/.current_wallpaper
-mkdir -p ~/.config/wallpapers
-cp -r ~/builds/hyprlanddots/config/wallpapers/* ~/.config/wallpapers
+mkdir -p ~/htpcsetup/wallpapers
+cp -r ~/builds/hyprlanddots/config/wallpapers/* ~/htpcsetup/wallpapers
 rm -rf ~/builds/hyprlanddots
+
+#Configure automatic updates
+sudo tee /etc/apt/apt.conf.d/20auto-upgrades > /dev/null <<EOF
+APT::Periodic::Update-Package-Lists "1";
+APT::Periodic::Download-Upgradeable-Packages "1";
+APT::Periodic::AutocleanInterval "7";
+APT::Periodic::Unattended-Upgrade "1";
+EOF
+
+#Create systemd service to auto-update flatpaks
+cat << 'EOF' | sudo tee /etc/systemd/system/flatpak-auto-update.service > /dev/null
+[Unit]
+Description=Auto update Flatpak apps
+
+[Service]
+Type=oneshot
+ExecStart=~/htpcsetup/scripts/flatpakautoupdate.sh
+EOF
+#Create the systemd timer file
+cat << 'EOF' | sudo tee /etc/systemd/system/flatpak-auto-update.timer > /dev/null
+[Unit]
+Description=Run Flatpak auto update daily
+
+[Timer]
+OnCalendar=daily
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+EOF
+#Reload systemd and start the timer
+sudo systemctl daemon-reload
+sudo systemctl enable flatpak-auto-update.timer
 
 #Remove ifupdown and configure NetworkManager for GNOME
 sudo nala purge ifupdown -y
 sudo sed -i '/^\[ifupdown\]/,/^\[/{s/^managed=.*/managed=true/}' /etc/NetworkManager/NetworkManager.conf
+
+#Remove unneeded packages
+sudo nala autoremove -y
+
+echo
+echo DONE. You should reboot now.
