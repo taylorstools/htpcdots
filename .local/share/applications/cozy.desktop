@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Cozy.tv
+Comment=Cozy.tv
+Icon=/home/taylor/htpcsetup/icons/cozy.png
+Exec=/home/taylor/htpcsetup/scripts/cozy.sh
+Terminal=false
+Type=Application
+Categories=Network;WebBrowser;
+StartupNotify=false

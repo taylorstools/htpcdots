@@ -1,0 +1,29 @@
+[Desktop Entry]
+Name=AntiMicroX
+Comment=Use a gamepad to control a variety of programs
+Name[sr]=Анти-микро
+Comment[sr]=Користите џојстик или играћу тастатуру за управљање различитим програмима
+Name[fr]=AntiMicroX
+Comment[fr]=Utilisez une manette de jeu pour commander un logiciel
+Name[de]=AntiMicroX
+Comment[de]=Nutze ein Gamepad, um Programme/Spiele zu steuern
+Comment[uk]=Використовуйте ігровий маніпулятор для керування програмами
+Exec=/home/taylor/AppImages/antimicrox.appimage --show %f
+TryExec=/home/taylor/AppImages/antimicrox.appimage
+Icon=/home/taylor/AppImages/.icons/antimicrox.svg
+
+StartupNotify=true
+Terminal=false
+Type=Application
+Categories=Game;Qt;Utility;
+MimeType=application/x-amgp;
+Keywords=game;controller;keyboard;joystick;mouse;
+Actions=run-in-tray;
+
+[Desktop Action run-in-tray]
+Name=AntiMicroX
+Exec=/home/taylor/AppImages/antimicrox.appimage --show %f
+TryExec=/home/taylor/AppImages/antimicrox.appimage
+Icon=/home/taylor/AppImages/.icons/antimicrox.svg
+
+X-AppImage-Version=07ef12
