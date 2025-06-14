@@ -17,16 +17,17 @@
 echo "$USER ALL=(ALL) NOPASSWD: ALL" | sudo tee -a /etc/sudoers
 
 #Install nala
-sudo apt install nala -y
+#sudo apt install nala -y
 
 #Fetch mirrors and save 10 fastest
-sudo nala fetch --fetches 10 --auto -y
+#sudo nala fetch --fetches 10 --auto -y
 
 #Perform update and upgrade
-sudo nala update
-sudo nala upgrade -y
+sudo apt update
+sudo apt upgrade -y
 
 packages=(
+    nala
     gdm3
     gnome-shell
     gnome-terminal
@@ -43,11 +44,16 @@ packages=(
     evtest
     gpg
     unattended-upgrades
+    wget
+    software-properties-common
+    apt-transport-https
+    ca-certificates
+    curl
 )
 
-#Install packages with Nala
+#Install packages with apt
 for package in ${packages[@]}; do
-    sudo nala install ${package} -y
+    sudo apt install ${package} -y
 done
 
 #Install Segoe UI font
@@ -63,18 +69,16 @@ chmod +x install.sh
 ./install.sh grey
 
 #Install Google Chrome
-sudo nala install software-properties-common apt-transport-https ca-certificates curl -y #Dependencies
 curl -fSsL https://dl.google.com/linux/linux_signing_key.pub | sudo gpg --dearmor | sudo tee /usr/share/keyrings/google-chrome.gpg >> /dev/null
 echo deb [arch=amd64 signed-by=/usr/share/keyrings/google-chrome.gpg] http://dl.google.com/linux/chrome/deb/ stable main | sudo tee /etc/apt/sources.list.d/google-chrome.list
-sudo nala update
-sudo nala install google-chrome-stable -y
+sudo apt update
+sudo apt install google-chrome-stable -y
 
 #Install Firefox
-sudo nala install wget -y
 wget -q https://packages.mozilla.org/apt/repo-signing-key.gpg -O- | sudo tee /etc/apt/keyrings/packages.mozilla.org.asc > /dev/null
 echo "deb [signed-by=/etc/apt/keyrings/packages.mozilla.org.asc] https://packages.mozilla.org/apt mozilla main" | sudo tee -a /etc/apt/sources.list.d/mozilla.list > /dev/null
-sudo nala update
-sudo nala install firefox -y
+sudo apt update
+sudo apt install firefox -y
 
 #Enable Flathub
 sudo flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
@@ -134,7 +138,7 @@ curl -s https://api.github.com/repos/fastfetch-cli/fastfetch/releases/latest \
   | cut -d '"' -f 4 \
   | xargs -n 1 -I {} sh -c 'curl -L -o ~/builds/fastfetch/$(basename {}) {}'
 
-sudo nala install -y ~/builds/fastfetch/fastfetch-linux-amd64.deb
+sudo apt install -y ~/builds/fastfetch/fastfetch-linux-amd64.deb
 
 #Modify .bashrc
 echo "alias cls='clear'" | tee -a ~/.bashrc
@@ -165,7 +169,7 @@ echo "fastfetch --logo-type small" | tee -a ~/.bashrc
 #Install Unified Remote
 mkdir -p ~/builds/urserver
 wget -O ~/builds/urserver/unified-remote.deb https://www.unifiedremote.com/download/linux-x64-deb
-sudo nala install -y ~/builds/urserver/unified-remote.deb
+sudo apt install -y ~/builds/urserver/unified-remote.deb
 
 #Copy the .config dot files (~/.config)
 mkdir -p ~/.config/
@@ -189,7 +193,7 @@ cp -r ~/builds/htpcdots/urserver/remotes/custom/HTPCRemote/* ~/.urserver/remotes
 mkdir -p ~/builds/jmp
 version=$(curl --head https://github.com/jellyfin/jellyfin-media-player/releases/latest | tr -d '\r' | grep '^location' | sed 's/.*\/v//g')
 wget "https://github.com/jellyfin/jellyfin-media-player/releases/download/v$version/jellyfin-media-player_$version-$(grep VERSION_CODENAME /etc/os-release | cut -d= -f2).deb" -O ~/builds/jmp/jmp.deb
-sudo nala install -y ~/builds/jmp/jmp.deb
+sudo apt install -y ~/builds/jmp/jmp.deb
 
 #Copy the wallpapers
 git clone https://github.com/taylorstools/hyprlanddots ~/builds/hyprlanddots
@@ -233,11 +237,11 @@ sudo systemctl daemon-reload
 sudo systemctl enable flatpak-auto-update.timer
 
 #Remove ifupdown and configure NetworkManager for GNOME
-sudo nala purge ifupdown -y
+sudo apt purge ifupdown -y
 sudo sed -i '/^\[ifupdown\]/,/^\[/{s/^managed=.*/managed=true/}' /etc/NetworkManager/NetworkManager.conf
 
 #Remove unneeded packages
-sudo nala autoremove -y
+sudo apt autoremove -y
 
 echo
 echo DONE. You should reboot now.
