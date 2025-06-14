@@ -27,7 +27,6 @@ sudo apt update
 sudo apt upgrade -y
 
 packages=(
-    nala
     gdm3
     gnome-shell
     gnome-terminal
