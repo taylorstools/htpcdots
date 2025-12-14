@@ -1,0 +1,6 @@
+[Desktop Entry]
+Exec=/home/taylor/.config/scripts/AutoUpdate.sh
+Icon=application-x-shellscript
+Name=AutoUpdate.sh
+Type=Application
+X-KDE-AutostartScript=true

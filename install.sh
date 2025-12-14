@@ -37,9 +37,13 @@ sudo wget -O /etc/udev/rules.d/60-antimicrox-uinput.rules https://raw.githubuser
 smbclient "//192.168.0.63/TaylorNAS" -U "$SMB_USER%$SMB_PASS" \
   -c "cd GitHub/htpcdots; get KDEConfig.sd.zip $HOME/KDEConfig.sd.zip"
 
-#Copy scripts dir
-cp -r ~/htpcdots/scripts/* ~/.config/scripts
+#Copy home dir
+cp -r ~/htpcdots/home/* ~/
+
+#Copy config dir
+cp -r ~/htpcdots/config/* ~/.config/
 chmod +x ~/.config/scripts/*
+chmod +x ~/.config/autostart/*
 
 #Copy antimicrox settings
 mkdir -p ~/.config/antimicrox
@@ -51,10 +55,21 @@ mkdir -p "$HOME/Wallpapers"
 smbclient "//192.168.0.63/TaylorNAS" -U "$SMB_USER%$SMB_PASS" \
   -c "cd Wallpapers; lcd $HOME/Wallpapers; prompt; mget *"
 
+#Set grub timeout to 0
+if command -v grub-mkconfig >/dev/null 2>&1; then
+  sudo sed -i 's/^GRUB_TIMEOUT=.*/GRUB_TIMEOUT=0/' /etc/default/grub
+  sudo grub-mkconfig -o /boot/grub/grub.cfg
+fi
+
+#Clear keyring
+rm -rf "$HOME/.local/share/kwalletd"
+rm -rf "$HOME/.local/share/keyrings"
+rm -f  "$HOME/.config/kwalletrc"
+
 #Copy system.yaml
 sudo cp ~/htpcdots/system.yaml /
 #System update
 sudo akshara update
 
 echo
-echo DONE. You should reboot now.
+echo -e "\e[32mDONE. You should reboot now.\e[0m"

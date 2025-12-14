@@ -1,0 +1,6 @@
+[Desktop Entry]
+Exec=/home/taylor/.config/scripts/SetWallpaper.sh
+Icon=application-x-shellscript
+Name=SetWallpaper.sh
+Type=Application
+X-KDE-AutostartScript=true
