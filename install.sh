@@ -1,3 +1,5 @@
+read -p "Enter new computer hostname: " NEWHOSTNAME
+
 #Prompt for SMB credentials (used to copy Save Desktop backup file)
 read -p "Enter SMB username: " SMB_USER
 read -p "Enter SMB password: " SMB_PASS
@@ -5,6 +7,9 @@ echo
 
 #Make it so user doesn't have to type password to use sudo
 echo "$USER ALL=(ALL) NOPASSWD: ALL" | sudo tee -a /etc/sudoers
+
+#Set hostname
+sudo hostnamectl set-hostname "$NEWHOSTNAME"
 
 flatpakages=(
     io.github.vikdevelop.SaveDesktop
