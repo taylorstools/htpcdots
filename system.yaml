@@ -27,6 +27,7 @@ packages:
     - 'imagemagick'
     - 'qt5-tools'
     - 'kdeconnect'
+    - 'github-cli'
 
 services:
     - 'sshd'
