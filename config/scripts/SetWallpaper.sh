@@ -3,7 +3,7 @@
 WALLPAPER_DIR="$HOME/Wallpapers/"
 
 #Get random wallpaper
-WALLPAPER=$(find "$WALLPAPER_DIR" -type f ! -name ".DrawerWallpaper" | shuf -n 1)
+WALLPAPER=$(find "$WALLPAPER_DIR" -maxdepth 1 -type f ! -name ".DrawerWallpaper" | shuf -n 1)
 
 #Get just the filename
 WALLPAPER_NAME=$(basename "$WALLPAPER")
